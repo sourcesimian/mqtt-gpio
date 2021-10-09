@@ -1,0 +1,95 @@
+gpio:
+  pin-factory: mock
+#  pin-factory: native
+
+  mqtt:
+  host: 10.0.0.5
+  port: 1883
+  client-id: rpi1
+  topic-prefix: dev/mqtt-gpio
+
+http:
+  port: 8080
+
+binding:
+  - name: test20
+    pins:
+    - gpio: GPIO20
+      mode: OUTPUT
+      pull-up-down: "OFF"
+    demand: test20/set
+    state: test20/state
+    qos: 1
+    retain: True
+    values:
+      "INCH": 1
+      "IDLE": 0
+    qos: 1
+    retain: True
+
+  - name: test21
+    pins:
+    - gpio: GPIO21
+      mode: INPUT
+      pull-up-down: UP
+    state: test21/state
+    qos: 1
+    retain: True
+    values:
+      "OPEN": 1
+      "CLOSED": 0
+
+  - name: remote
+    pins:
+    - gpio: GPIO16
+      mode: OUTPUT
+      pull-up-down: "OFF"
+      initial-value: 1
+    demand: remote/set
+    state: remote/state
+    qos: 1
+    retain: True
+    values:
+      PRESS:  0
+      IDLE: 1
+    inch:
+      MOVE:
+        - PRESS, 1
+        - IDLE, 0
+
+  - name: manip
+    pins:
+    - gpio: GPIO26
+      mode: OUTPUT
+      pull-up-down: "OFF"
+    - gpio: GPIO19
+      mode: OUTPUT
+      pull-up-down: "OFF"
+    - gpio: GPIO13
+      mode: OUTPUT
+      pull-up-down: "OFF"
+    - gpio: GPIO6
+      mode: OUTPUT
+      pull-up-down: "OFF"
+    demand: manip/set
+    state: manip/state
+    qos: 1
+    retain: True
+    values:
+      _IDLE:  0, 0, 0, 0
+      _CLOSE: 0, 1, 0, 1
+      _MAIN:  1, 0, 0, 1
+      _DAM:   0, 1, 1, 0
+    initial-value: 0, 0, 0, 0
+    inch:
+      CLOSE:
+      - _CLOSE, 10, CLOSING
+      - _IDLE, 0, CLOSED
+      MAIN:
+      - _CLOSE, 10, CLOSING
+      - _MAIN, 10, OPENING-MAIN
+      - _IDLE, 0, MAIN
+      DAM:
+      - _CLOSE, 10, CLOSING
+      - _DAM, 10, OPENING-DAM
+      - _IDLE, 0, DAM

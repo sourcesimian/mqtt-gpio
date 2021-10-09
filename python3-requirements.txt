@@ -1,0 +1,4 @@
+PyYAML
+paho-mqtt
+gpiozero
+gevent
