@@ -1,0 +1,121 @@
+gpio:
+  pin-factory: mock  # native
+
+mqtt:
+  host: broker.emqx.io
+  port: 1883
+  client-id: mqtt-gpio-demo
+  topic-prefix: demo/mqtt-gpio
+
+http:
+  port: 8080
+
+logging:
+  level: INFO
+
+binding:
+
+# A standard single pin output. Publish "ON" or "OFF" to 'demo/mqtt-gpio/test20/set'
+# to change the state of the pin. Once the pin is changed the payload will be pubished
+# to 'demo/mqtt-gpio/test20/status'
+- name: test20
+  pins:
+  - gpio: GPIO20
+    mode: OUTPUT
+  demand: test20/set
+  state: test20/state
+  values:
+  - payload: "ON"
+    value: 1
+  - payload: "OFF"
+    value: 0
+
+# A standard single pin input. Pin state changes will publish "YES" or "NO" to
+# 'demo/mqtt-gpio/test21/state'
+- name: test21
+  pins:
+  - gpio: GPIO21
+    mode: INPUT
+    pull-up-down: "UP"
+    bounce-time: 0.02
+  state: test21/state
+  values:
+  - payload: "YES"
+    value: 1
+  - payload: "NO"
+    value: 0
+
+# A single pin inching output. Publish "PULSE" or "BLINK" to 'demo/mqtt-gpio/test22/set'
+# to change the pulse or blink the GPIO pin. "BUSY" and then "IDLE" wil be published to
+# 'demo/mqtt-gpio/test22/state'
+- name: test22
+  pins:
+  - gpio: GPIO22
+    mode: OUTPUT
+  demand: test22/set 
+  state: test22/state
+  initial-value: low
+  values:
+  - name: "high"
+    value: 1
+  - name: "low"
+    value: 0
+    payload: IDLE
+  inch:
+  - payload: "PULSE"
+    steps:
+    - high, 1.5, BUSY
+    - low, 0, IDLE
+  - payload: "BLINK"
+    steps:
+    - high, 1.5, BUSY
+    - low, 1.5, BUSY
+    - high, 1.5, BUSY
+    - low, 1.5, BUSY
+    - high, 1.5, BUSY
+    - low, 0, IDLE
+
+
+# A multi pin output. Publish "ONE", "TWO". "THREE" or "FOUR" to 'demo/mqtt-gpio/test23_24/set'
+# to change the GPIO pins. Once the pins have been changed "ONE", "TWO". "THREE" or "FOUR" will
+# be published to 'demo/mqtt-gpio/test23_24/state'
+- name: test23_24
+  pins:
+  - gpio: GPIO23
+    mode: OUTPUT
+  - gpio: GPIO24
+    mode: OUTPUT
+  demand: test23_24/set
+  state: test23_24/state
+  status: test23_24/status
+  initial-value: zero
+  values:
+  - payload: "ZERO"
+    value: 0, 0
+    name: zero
+  - payload: "ONE"
+    value: 0, 1
+  - payload: "TWO"
+    value: 1, 0
+  - payload: "THREE"
+    value: 1, 1
+
+# A multi pin input. When the pins change, "ALPHA", "BRAVO", "CHARLIE" or "DELTA" will be
+# published to 'demo/mqtt-gpio/test25_26/state'
+- name: test25_26
+  pins:
+  - gpio: GPIO25
+    mode: INPUT
+  - gpio: GPIO26
+    mode: INPUT
+  state: test25_26/state
+  values:
+  - payload: "ALPHA"
+    value: 0, 0
+  - payload: "BRAVO"
+    value: 0, 1
+  - payload: "CHARLIE"
+    value: 1, 0
+  - payload: "DELTA"
+    value: 1, 1
+  change-delay: 0.1

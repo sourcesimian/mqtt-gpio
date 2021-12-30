@@ -2,94 +2,113 @@ gpio:
   pin-factory: mock
 #  pin-factory: native
 
-  mqtt:
-  host: 10.0.0.5
+mqtt:
+  host: broker.emqx.io
   port: 1883
-  client-id: rpi1
-  topic-prefix: dev/mqtt-gpio
+  client-id: mqtt-gpio-demo
+  topic-prefix: demo/mqtt-gpio
 
 http:
   port: 8080
 
+logging:
+  level: DEBUG
+
 binding:
-  - name: test20
-    pins:
-    - gpio: GPIO20
-      mode: OUTPUT
-      pull-up-down: "OFF"
-    demand: test20/set
-    state: test20/state
-    qos: 1
-    retain: True
-    values:
-      "INCH": 1
-      "IDLE": 0
-    qos: 1
-    retain: True
+- name: test20
+  pins:
+  - gpio: GPIO20
+    mode: OUTPUT
+    pull-up-down: "OFF"
+  demand: test20/set
+  state: test20/state
+  qos: 1
+  retain: True
+  values:
+  - payload: "INCH"
+    value: 1
+  - payload: "IDLE"
+    value: 0
 
-  - name: test21
-    pins:
-    - gpio: GPIO21
-      mode: INPUT
-      pull-up-down: UP
-    state: test21/state
-    qos: 1
-    retain: True
-    values:
-      "OPEN": 1
-      "CLOSED": 0
+- name: test21
+  pins:
+  - gpio: GPIO21
+    mode: INPUT
+    pull-up-down: UP
+    bounce-time: 0.01
+  state: test21/state
+  qos: 1
+  retain: True
+  values:
+  - payload: "OPEN"
+    value: 1
+  - payload: "CLOSED"
+    value: 0
 
-  - name: remote
-    pins:
-    - gpio: GPIO16
-      mode: OUTPUT
-      pull-up-down: "OFF"
-      initial-value: 1
-    demand: remote/set
-    state: remote/state
-    qos: 1
-    retain: True
-    values:
-      PRESS:  0
-      IDLE: 1
-    inch:
-      MOVE:
-        - PRESS, 1
-        - IDLE, 0
+- name: remote
+  pins:
+  - gpio: GPIO16
+    mode: OUTPUT
+    pull-up-down: "OFF"
+  demand: remote/set
+  state: remote/state
+  qos: 1
+  retain: True
+  values:
+  - name: press
+    payload: "PRESS"
+    value: 0
+  - name: idle
+    payload: "IDLE"
+    value: 1
+  inch:
+  - payload: "MOVE"
+    steps:
+    - press, 1
+    - idle, 0
 
-  - name: manip
-    pins:
-    - gpio: GPIO26
-      mode: OUTPUT
-      pull-up-down: "OFF"
-    - gpio: GPIO19
-      mode: OUTPUT
-      pull-up-down: "OFF"
-    - gpio: GPIO13
-      mode: OUTPUT
-      pull-up-down: "OFF"
-    - gpio: GPIO6
-      mode: OUTPUT
-      pull-up-down: "OFF"
-    demand: manip/set
-    state: manip/state
-    qos: 1
-    retain: True
-    values:
-      _IDLE:  0, 0, 0, 0
-      _CLOSE: 0, 1, 0, 1
-      _MAIN:  1, 0, 0, 1
-      _DAM:   0, 1, 1, 0
-    initial-value: 0, 0, 0, 0
-    inch:
-      CLOSE:
-      - _CLOSE, 10, CLOSING
-      - _IDLE, 0, CLOSED
-      MAIN:
-      - _CLOSE, 10, CLOSING
-      - _MAIN, 10, OPENING-MAIN
-      - _IDLE, 0, MAIN
-      DAM:
-      - _CLOSE, 10, CLOSING
-      - _DAM, 10, OPENING-DAM
-      - _IDLE, 0, DAM
+- name: manip
+  pins:
+  - gpio: GPIO26
+    mode: OUTPUT
+    pull-up-down: "OFF"
+  - gpio: GPIO19
+    mode: OUTPUT
+    pull-up-down: "OFF"
+  - gpio: GPIO13
+    mode: OUTPUT
+    pull-up-down: "OFF"
+  - gpio: GPIO6
+    mode: OUTPUT
+    pull-up-down: "OFF"
+  demand: manip/set
+  state: manip/state
+  status: manip/status
+  qos: 1
+  values:
+  - name: initial
+    value: 0, 0, 0, 0
+  - name: idle
+    value: 0, 0, 0, 0
+  - name: close
+    value: 0, 1, 0, 1
+  - name: main
+    value: 1, 0, 0, 1
+  - name: dam
+    value: 0, 1, 1, 0
+  initial-value: initial
+  inch:
+  - payload: "CLOSE"
+    steps:
+    - close, 10, CLOSING
+    - idle, 0, CLOSED
+  - payload: "MAIN"
+    steps:
+    - close, 10, CLOSING
+    - main, 10, OPENING-MAIN
+    - idle, 0, MAIN
+  - payload: "DAM"
+    steps:
+    - close, 10, CLOSING
+    - dam, 10, OPENING-DAM
+    - idle, 0, DAM
