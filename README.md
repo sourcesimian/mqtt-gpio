@@ -92,8 +92,8 @@ mqtt:
 ### MQTT - Basic Auth
 ```
     type: basic
-    username: <string>          # optional: MQTT broker username
-    password: <string>          # optional: MQTT broker password
+    username: <string>          # MQTT broker username
+    password: <string>          # MQTT broker password
 ```
 
 ### MQTT - mTLS Auth

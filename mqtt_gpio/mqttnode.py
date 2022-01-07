@@ -20,17 +20,18 @@ class MqttNode:
         self._on_demand(payload, timestamp - self._mqtt.connect_timestamp)
 
     def state(self, state):
-        assert isinstance(state, str)
         if not self._state_path:
-            logging.warning('Skipping publish to empty topic "%s"', state)
             return
+        if state and not isinstance(state, str):
+            state = json.dumps(state, sort_keys=True)
+
         logging.info('Publish "%s" %s', self._state_path, state)
         self._mqtt.publish(self._state_path, payload=state, qos=self._qos, retain=self._retain)
 
     def status(self, payload):
         if not self._status_path:
             return
-        if not isinstance(payload, str):
+        if payload and not isinstance(payload, str):
             payload = json.dumps(payload, sort_keys=True)
 
         logging.debug('Publish "%s" %s', self._status_path, payload)

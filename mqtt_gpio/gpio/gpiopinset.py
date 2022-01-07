@@ -34,7 +34,8 @@ class GpioPinSet:   # pylint: disable=R0902
         self._values_by_value = {}
         self._values_by_payload = {}
         for value_blob in self._blob['values']:
-            self._values_by_name[value_blob['name']] = value_blob
+            if 'name' in value_blob:
+                self._values_by_name[value_blob['name']] = value_blob
             self._values_by_value[value_blob['value']] = value_blob
             if 'payload' in value_blob:
                 self._values_by_payload[value_blob['payload']] = value_blob
@@ -194,6 +195,9 @@ class GpioPinSet:   # pylint: disable=R0902
         try:
             payload = self._values_by_value[tuple(self._values)]['payload']
         except KeyError:
-            payload = 'UNKNOWN'
-            logging.warning('{%s} No payload defined for "%s"', self._blob['name'], self._values)
+            try:
+                payload = self._values_by_value['~']['payload']
+            except KeyError:
+                payload = None
+                logging.warning('{%s} No payload defined for %s', self._blob['name'], self._values)
         self._on_change(payload)
