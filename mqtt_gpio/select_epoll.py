@@ -24,4 +24,4 @@ class SelectEpoll:
         try:
             cls._orig_epoll = select.epoll
         except AttributeError:
-            raise NotImplementedError('OS does not implement Epoll')  # pylint: disable=W0707
+            raise NotImplementedError('OS does not implement Epoll') from None

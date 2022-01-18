@@ -5,7 +5,7 @@ mqtt:
   host: broker.emqx.io
   port: 1883
   client-id: mqtt-gpio-demo
-  topic-prefix: demo/mqtt-gpio
+  topic-prefix: sourcesimian/mqtt-gpio/demo
 
 http:
   port: 8080

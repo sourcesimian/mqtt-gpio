@@ -7,7 +7,7 @@ A service which connects MQTT topics to GPIO pins, configurable via YAML. Additi
 
 - [Installation](#installation)
   - [Kubernetes](#kubernetes)
-  - [MQTT Broker](#mqtt-broker)
+  - [MQTT Infrastructure](#mqtt-infrastructure)
 - [Configuration](#configuration)
   - [GPIO](#gpio)
   - [MQTT](#mqtt)
@@ -61,8 +61,8 @@ Where `entrypoint.sh` looks like [this](./docker/entrypoint.sh), and uses the `N
                 fieldPath: spec.nodeName
 ```
 
-## MQTT Broker
-An installation of **mqtt-gpio** will need a MQTT broker to connect to. There are many possibilities available. [Eclipse Mosquitto](https://github.com/eclipse/mosquitto/blob/master/README.md) is a great self hosted option with many installation options including prebuilt containers on [Docker Hub](https://hub.docker.com/_/eclipse-mosquitto).
+## MQTT Infrastructure
+An installation of **mqtt-gpio** will need a MQTT broker to connect to. There are many possibilities available. [Eclipse Mosquitto](https://github.com/eclipse/mosquitto/blob/master/README.md) is a great self hosted option with many ways of installation including pre-built containers on [Docker Hub](https://hub.docker.com/_/eclipse-mosquitto).
 
 To control the messages on your MQTT broker you may consider [mqtt-panel](https://github.com/sourcesimian/mqtt-panel/blob/main/README.md) which is a simple web app panel that gives user interactivity with MQTT topics.
 
