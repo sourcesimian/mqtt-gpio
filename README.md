@@ -117,7 +117,7 @@ http:
 
 ## Logging
 ```
-logging:                        # Logging settings
+logging:
   level: INFO                   # optional: Logging level, default DEBUG
 ```
 
