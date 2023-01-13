@@ -6,6 +6,7 @@ MQTT GPIO <!-- omit in toc -->
 A service which connects MQTT topics to GPIO pins, configurable via YAML. Additionally supports input and output pin groups, and complex inching.
 
 - [Installation](#installation)
+  - [Docker](#docker)
   - [Kubernetes](#kubernetes)
   - [MQTT Infrastructure](#mqtt-infrastructure)
 - [Configuration](#configuration)
@@ -25,6 +26,22 @@ A service which connects MQTT topics to GPIO pins, configurable via YAML. Additi
 
 # Installation
 Prebuilt container images are available on [Docker Hub](https://hub.docker.com/r/sourcesimian/mqtt-gpio).
+
+## Docker
+A Docker invocation might look like:
+```
+docker run --detach --name mqtt-gpio --restart unless-stopped -v /sys -v ${PWD}/mqtt-gpio-config.yaml:/config.yaml --privileged sourcesimian/mqtt-gpio:latest
+```
+and a Docker Compose file:
+```
+services:
+  mqtt-gpio:
+    image: sourcesimian/mqtt-gpio:latest
+    volumes:
+    - /sys:/sys
+    - ./mqtt-gpio-config.yaml:/config.yaml
+    privileged: true
+```
 
 ## Kubernetes
 Currently tested using `native` factory, run as a DaemonSet on [K3s](https://k3s.io/) on a [Raspberry Pi 4B](https://en.wikipedia.org/wiki/Raspberry_Pi) with:
